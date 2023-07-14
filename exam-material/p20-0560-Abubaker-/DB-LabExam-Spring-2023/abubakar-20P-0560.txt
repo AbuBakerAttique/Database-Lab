@@ -1,0 +1,279 @@
+########### ABUBAKER-ATTIQUE-P20-0560 ##############
+
+
+1) list all hotel whose names third alphabet has a 't'.order the result in decending order by hotelname.
+=========================================================================================================
+
+SELECT hotelname
+    -> FROM hotel
+    -> WHERE SUBSTRING(hotelname, 3, 1) = 't'
+    -> ORDER BY hotelname DESC;
++-----------+
+| hotelname |
++-----------+
+| Watergate |
+| Latham    |
++-----------+
+2 rows in set (0.000 sec)
+
+
+
+==========================================================================================================
+2)create a view that list all the hotel's name which have double as well as family type rooms.
+========================================================================================================
+ CREATE VIEW myhotel AS
+    -> SELECT h.hotelname
+    -> FROM hotel h
+    -> INNER JOIN room r1 ON h.hotelno = r1.hotelno AND r1.type = 'double'
+    -> INNER JOIN room r2 ON h.hotelno = r2.hotelno AND r2.type = 'family'
+    -> GROUP BY h.hotelno, h.hotelname
+    -> HAVING COUNT(DISTINCT r1.roomno) > 0 AND COUNT(DISTINCT r2.roomno) > 0;
+Query OK, 0 rows affected (0.424 sec)
+
+MariaDB [guest_house]> select * from myhotel;
++-----------+
+| hotelname |
++-----------+
+| Latham    |
+| Grosvenor |
++-----------+
+2 rows in set (0.002 sec)
+
+==================================================================================================
+3) list all the rooms nos which were booked in the period 2005-2010.also display the room's hotel no and the hotel name.
+=============================================================================================================================
+ SELECT r.roomno, r.hotelno, h.hotelname
+    -> FROM booking b
+    -> JOIN room r ON b.roomno = r.roomno
+    -> JOIN hotel h ON r.hotelno = h.hotelno
+    -> WHERE b.datefrom BETWEEN '2005-01-01' AND '2010-12-31';
++--------+---------+---------------+
+| roomno | hotelno | hotelname     |
++--------+---------+---------------+
+|   1001 | ch01    | Omni Shoreham |
+|   1001 | dc01    | Latham        |
+|   1001 | fb02    | Watergate     |
++--------+---------+---------------+
+3 rows in set (0.001 sec)
+
+
+
+
+==========================================================================================================================
+4) list all double or family rooms with a prive below 40.00 per night,in ascending order of price.Also display the rooms's hotel no and hotel name.
+=============================================================================================================
+ SELECT r.roomno, r.hotelno, h.hotelname,r.price
+    -> FROM room r
+    -> JOIN hotel h ON r.hotelno = h.hotelno
+    -> WHERE r.type IN ('double', 'family') AND r.price < 40.00
+    -> ORDER BY r.price ASC;
++--------+---------+--------------+-------+
+| roomno | hotelno | hotelname    | price |
++--------+---------+--------------+-------+
+|    801 | ch02    | Phoenix Park | 15.00 |
+|    601 | fb01    | Grosvenor    | 29.00 |
+|   1001 | dc01    | Latham       | 30.00 |
+|   1101 | dc01    | Latham       | 35.00 |
+|    701 | fb01    | Grosvenor    | 39.00 |
++--------+---------+--------------+-------+
+5 rows in set (0.001 sec)
+
+===========================================================================================================
+
+5) display the names of hostels where were booked more than once.
+================================================================================
+select h.hotelname
+    -> from hotel h
+    -> JOIN booking b ON h.hotelno=b.hotelno
+    -> GROUP BY h.hotelname
+    -> HAVING COUNT(b.hotelno)>1;
++-----------+
+| hotelname |
++-----------+
+| Grosvenor |
+| Latham    |
+| Watergate |
++-----------+
+3 rows in set (0.001 sec)
+==================================================================================
+6) find out the room rooms who have price greater than the avgerage price in the their hotels room.Dispaly the hotel name as well.
+=================================================================================
+select AVG(PRICE) FROM room;
++------------+
+| AVG(PRICE) |
++------------+
+|  35.748333 |
++------------+
+ SELECT r.roomno, r.hotelno, h.hotelname
+    -> FROM room r
+    -> JOIN hotel h ON r.hotelno = h.hotelno
+    -> WHERE r.price > (
+    ->     SELECT AVG(price) as AVG_price
+    ->     FROM room
+    ->     WHERE hotelno = r.hotelno
+    -> )
+    -> ;
++--------+---------+---------------+
+| roomno | hotelno | hotelname     |
++--------+---------+---------------+
+|   1101 | ch01    | Omni Shoreham |
+|    801 | ch02    | Phoenix Park - |
+|   1001 | dc01    | Latham        | 
+|   1101 | dc01    | Latham        | 
+|    701 | fb01    | Grosvenor     | 
+|   1101 | fb02    | Watergate     | 
++--------+---------+---------------+
+6 rows in set (0.001 sec)
+=================================================
+
+7) Display the names of guest house who have booked the same hotel more than once.
+=========================================================================================
+SELECT h.hotelname , r.guestname,r.guestno
+    -> FROM  booking b
+    -> join guest r ON b.guestno=r.guestno
+    -> join hotel h ON h.hotelno=b.hotelno
+    -> group by h.hotelno
+    -> HAVING COUNT(b.hotelno) >1;
++-----------+--------------+---------+
+| hotelname | guestname    | guestno |
++-----------+--------------+---------+
+| Latham    | Mary Tregear |   10003 |
+| Grosvenor | John Kay     |   10001 |
+| Watergate | John Kay     |   10001 |
++-----------+--------------+---------+
+3 rows in set (0.001 sec)
+
+
+=============================================================================================
+8) Write a query to display hotelno,roomno,room price,average room price and list the different between room price and average price of room.label this coloums 'difference' and the average price column as 'average '
+================================================================================================
+ SELECT hotelno, roomno, price, AVG(price) AS average, (price - AVG(price)) AS difference
+    -> FROM room
+    -> GROUP BY hotelno;
++---------+--------+-------+-----------+------------+
+| hotelno | roomno | price | average   | difference |
++---------+--------+-------+-----------+------------+
+| ch01    |   1001 | 29.99 | 44.990000 | -15.000000 |
+| ch02    |    701 | 10.00 | 12.500000 |  -2.500000 |
+| dc01    |    901 | 18.00 | 27.666667 |  -9.666667 |
+| fb01    |    501 | 19.00 | 29.000000 | -10.000000 |
+| fb02    |   1001 | 58.00 | 72.000000 | -14.000000 |
++---------+--------+-------+-----------+------------+
+5 rows in set (0.001 sec)
+
+MariaDB [guest_house]> SELECT hotelno, roomno, price, AVG(price) AS average, (price - AVG(price)) AS difference
+    -> FROM room
+    -> GROUP BY hotelno,roomno;
++---------+--------+-------+-----------+------------+
+| hotelno | roomno | price | average   | difference |
++---------+--------+-------+-----------+------------+
+| ch01    |   1001 | 29.99 | 29.990000 |   0.000000 |
+| ch01    |   1101 | 59.99 | 59.990000 |   0.000000 |
+| ch02    |    701 | 10.00 | 10.000000 |   0.000000 |
+| ch02    |    801 | 15.00 | 15.000000 |   0.000000 |
+| dc01    |    901 | 18.00 | 18.000000 |   0.000000 |
+| dc01    |   1001 | 30.00 | 30.000000 |   0.000000 |
+| dc01    |   1101 | 35.00 | 35.000000 |   0.000000 |
+| fb01    |    501 | 19.00 | 19.000000 |   0.000000 |
+| fb01    |    601 | 29.00 | 29.000000 |   0.000000 |
+| fb01    |    701 | 39.00 | 39.000000 |   0.000000 |
+| fb02    |   1001 | 58.00 | 58.000000 |   0.000000 |
+| fb02    |   1101 | 86.00 | 86.000000 |   0.000000 |
++---------+--------+-------+-----------+------------+
+12 rows in set (0.000 sec)
+
+
+
+
+================================================================================================
+9)write a query to display the roomno and  their respective hotelname which was never booked by any guest.
+=================
+ SELECT r.roomno, h.hotelname
+    -> FROM room r
+    -> JOIN hotel h ON r.hotelno = h.hotelno
+    -> WHERE NOT EXISTS (
+    ->     SELECT 1
+    ->     FROM booking b
+    ->     WHERE b.roomno = r.roomno
+    -> );
++--------+-----------+
+| roomno | hotelname |
++--------+-----------+
+|    901 | Latham    |
++--------+-----------+
+1 row in set (0.001 sec)
+====================
+
+
+10) Display the names of hotels which were booked by the same guest more than once.show the guest detail as well.
+========
+SELECT g.guestname, h.hotelname
+    -> FROM booking b
+    -> JOIN guest g ON b.guestno = g.guestno
+    -> JOIN hotel h ON b.hotelno = h.hotelno
+    -> GROUP BY g.guestname, h.hotelname
+    -> HAVING COUNT(*) > 1;
++-----------+-----------+
+| guestname | hotelname |
++-----------+-----------+
+| John Kay  | Grosvenor |
++-----------+-----------+
+1 row in set (0.001 sec)
+====================================================================
+
+
+11) write a query which genrates a list of guest password, using the last two digits of guestno combined with the first threee 
+characters of guest name in upper case and length of guest address fiels.lable the columns as guest_password.
+===============
+SELECT CONCAT(UPPER(SUBSTRING(guestname, 1, 3)),
+    -> RIGHT(guestno,2),
+    -> LENGTH(guestaddress)) AS GUEST_PASSWORD
+    -> FROM guest;
++----------------+
+| GUEST_PASSWORD |
++----------------+
+| JOH0118        |
+| MIK0218        |
+| MAR0321        |
+| JOE0421        |
+| CAR0520        |
+| TIN0619        |
+| TON0719        |
++----------------+
+7 rows in set (0.000 sec)
+=========================================================================================================
+12) write query to list for every guest, the numbers of times it has reserved the rooms.Display the guestno,name and count.
+
+ SELECT guestno, guestname, COUNT(*) AS count
+    -> FROM guest
+    -> GROUP BY guestno, guestname
+    -> ORDER BY guestno;
++---------+--------------+-------+
+| guestno | guestname    | count |
++---------+--------------+-------+
+|   10001 | John Kay     |     1 |
+|   10002 | Mike Ritchie |     1 |
+|   10003 | Mary Tregear |     1 |
+|   10004 | Joe Keogh    |     1 |
+|   10005 | Carol Farrel |     1 |
+|   10006 | Tina Murphy  |     1 |
+|   10007 | Tony Shaw    |     1 |
++---------+--------------+-------+
+7 rows in set (0.001 sec)
+
+
+
+
+==========================================================================================================
+15 ) create a single stored procedure for the guest and hotel table to insert data.The stored procedure must take values as parameter.
+===========================================================
+
+CREATE PROCEDURE guest_hotel(IN hotelno VARCHAR(50), IN hotelname VARCHAR(50), IN city VARCHAR(50))
+
+INSERT INTO hotel (hotelno, age, rating) 
+VALUES ('fg222', 'fast', 'pesh');
+=========================================================================================================
+call guest_hotel(.....)
+
+
+

@@ -1,0 +1,132 @@
+Question number 1:
+
+select b.id as boatID , b.name as Boat_Name , count(*) as Reservation_Count
+from boat b 
+left join reservation r on b.id = r.bid 
+group by b.id;
+
+
+
+
+Question number 2:
+
+select s.name AS Sailor_Name , s.id AS Sailor_ID
+from sailor s 
+join reservation r on s.id = r.sid
+join boat b on r.bid = b.id where b.colour = "red";
+
+
+
+
+Question 4
+
+SELECT b.name AS Boat_Name, COUNT(*) AS Reservation_Count
+FROM reservation r
+JOIN boat b ON r.bid = b.id
+GROUP BY b.name
+ORDER BY Reservation_Count DESC
+LIMIT 1;
+	
+	
+Question number 5:
+
+select s.id , s.name
+from sailor s
+where not exists(
+select * from reservation r
+where s.id = r.sid);
+
+
+question number 6:
+
+CREATE VIEW red_Boat AS
+SELECT id, name, colour
+FROM boat
+WHERE colour = 'red';
+
+SELECT * from red_Boat;
+
+	
+Question number 7:
+
+select b.name as boat_name , s.name as Sailor_Name
+from boat b
+join reservation r on b.id = r.bid
+join sailor s on r.sid = s.id
+where s.rating = 8;
+
+
+Question number 8:
+
+select b.name , b.id
+from boat b 
+join reservation r on b.id = r.bid 
+join sailor s on r.sid = s.id
+where not rating  = 8;
+
+Question number 9:
+
+select count(colour) from boat where colour = 'red';
+
+Question number 10:
+
+select b.name as boat_name
+from boat b
+join reservation r on b.id = r.bid
+join sailor s on r.sid = s.id
+where s.rating = 8;
+
+
+Question number 11:
+
+SELECT sailor.name, COUNT(reservation.bid) as num_reservations
+FROM sailor
+JOIN reservation ON sailor.id = reservation.sid
+GROUP BY sailor.id;
+
+
+Question number 12:
+
+SELECT b.id, b.name, COUNT(r.bid) as num_reservations
+FROM boat b
+JOIN reservation r ON b.id = r.bid
+GROUP BY b.id
+HAVING num_reservations >= 2;
+
+
+
+Question number 13:
+
+CREATE PROCEDURE insert_sailor(IN name VARCHAR(50), IN age INT, IN rating INT)
+
+INSERT INTO sailor (name, age, rating) VALUES (name, age, rating);
+
+call insert_sailor(.....)
+
+Question number 14:
+SELECT CONCAT(UCASE(SUBSTRING(name, 1, 1)), UCASE(SUBSTRING(name, 2, 1)), UCASE(SUBSTRING(name, 3, 1)), age, LENGTH(rating)) AS sailors_password
+FROM sailor;
+
+
+Question number 15:
+
+SELECT CONCAT('The ',name, ' whose id is ',id, ' has ',colour, ' colour') AS boat_data
+FROM boat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

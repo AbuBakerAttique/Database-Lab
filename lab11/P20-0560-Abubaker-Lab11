@@ -1,0 +1,142 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+test> use P20_0560_6A
+switched to db P20_0560_6A
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+P20_0560_6A> db.createCollection("users")
+{ ok: 1 }
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+P20_0560_6A> db.users.insert({"username":"Ali",password:"def321",email:"ali123@yahoo.com",DOB:1996-03-04,address:"Peshawar",contact:+923332233322})
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("643e452596c00dd0375ea378") }
+}
+P20_0560_6A> db.users.insert({"username":"Haroon",password:"fast123",email:"haroon@gmail.com",address:"karachi"})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("643e455e96c00dd0375ea379") }
+}
+P20_0560_6A> db.users.insert({"username":"Zain",password:"Abc123",email:"zain@gmail.com",DOB:1997-02-13,address:"Islamabad"})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("643e459d96c00dd0375ea37a") }
+}
+P20_0560_6A> db.users.insert({"username":"Atif",password:"Qwe123",email:"atif@gmail.com",address:"Islamabad",contact:+923139834276})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("643e45e796c00dd0375ea37b") }
+}
+P20_0560_6A> db.users.insert({"username":"Noman",password:"def321",email:"noman@gmail.com",DOB:1996-03-04,address:"Peshawar",contact:+923349056432})
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("643e462396c00dd0375ea37c") }
+}
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+P20_0560_6A> db.users.find().pretty()
+[
+  {
+    _id: ObjectId("643e452596c00dd0375ea378"),
+    username: 'Ali',
+    password: 'def321',
+    email: 'ali123@yahoo.com',
+    DOB: 1989,
+    address: 'Peshawar',
+    contact: 923332233322
+  },
+  {
+    _id: ObjectId("643e455e96c00dd0375ea379"),
+    username: 'Haroon',
+    password: 'fast123',
+    email: 'haroon@gmail.com',
+    address: 'karachi'
+  },
+  {
+    _id: ObjectId("643e459d96c00dd0375ea37a"),
+    username: 'Zain',
+    password: 'Abc123',
+    email: 'zain@gmail.com',
+    DOB: 1982,
+    address: 'Islamabad'
+  },
+  {
+    _id: ObjectId("643e45e796c00dd0375ea37b"),
+    username: 'Atif',
+    password: 'Qwe123',
+    email: 'atif@gmail.com',
+    address: 'Islamabad',
+    contact: 923139834276
+  },
+  {
+    _id: ObjectId("643e462396c00dd0375ea37c"),
+    username: 'Noman',
+    password: 'def321',
+    email: 'noman@gmail.com',
+    DOB: 1989,
+    address: 'Peshawar',
+    contact: 923349056432
+  }
+]
+
+
+
+P20_0560_6A> db.users.find({"address": "Islamabad"})
+[
+  {
+    _id: ObjectId("643e459d96c00dd0375ea37a"),
+    username: 'Zain',
+    password: 'Abc123',
+    email: 'zain@gmail.com',
+    DOB: 1982,
+    address: 'Islamabad'
+  },
+  {
+    _id: ObjectId("643e45e796c00dd0375ea37b"),
+    username: 'Atif',
+    password: 'Qwe123',
+    email: 'atif@gmail.com',
+    address: 'Islamabad',
+    contact: 923139834276
+  }
+]
+
+
+
+
+P20_0560_6A> db.users.find({ address:{$in:["karachi", "Peshawar"] } } )
+[
+  {
+    _id: ObjectId("643e452596c00dd0375ea378"),
+    username: 'Ali',
+    password: 'def321',
+    email: 'ali123@yahoo.com',
+    DOB: 1989,
+    address: 'Peshawar',
+    contact: 923332233322
+  },
+  {
+    _id: ObjectId("643e455e96c00dd0375ea379"),
+    username: 'Haroon',
+    password: 'fast123',
+    email: 'haroon@gmail.com',
+    address: 'karachi'
+  },
+  {
+    _id: ObjectId("643e462396c00dd0375ea37c"),
+    username: 'Noman',
+    password: 'def321',
+    email: 'noman@gmail.com',
+    DOB: 1989,
+    address: 'Peshawar',
+    contact: 923349056432
+  }
+]
+
+
